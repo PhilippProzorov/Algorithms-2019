@@ -2,8 +2,8 @@ package lesson2;
 
 import kotlin.NotImplementedError;
 import kotlin.Pair;
-
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class JavaAlgorithms {
@@ -32,7 +32,34 @@ public class JavaAlgorithms {
      * В случае обнаружения неверного формата файла бросить любое исключение.
      */
     static public Pair<Integer, Integer> optimizeBuyAndSell(String inputName) {
-        throw new NotImplementedError();
+        //Трудоёмкость - O(n)
+        //Ресурсоёмкость - O(n)
+        //n - количество строк входного файла
+        List<Integer> prices = new ArrayList<>();
+        Pair<Integer, Integer> biggestProfit = new Pair<>(1, 2);
+        int maxPriceValue = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputName))) {
+            Scanner scanner = new Scanner(reader);
+            while (scanner.hasNextLine()) {
+                prices.add(Integer.parseInt(scanner.nextLine()));
+            }
+        } catch (IOException | NumberFormatException e) {
+            throw new IllegalArgumentException("Incorrect input");
+        }
+        int amount = prices.size() - 2;
+        int priceIndex = prices.size() - 1;
+        while (amount > 0) {
+            if ((prices.get(priceIndex) - prices.get(amount)) >= maxPriceValue) {
+                biggestProfit = new Pair<>(amount + 1, priceIndex + 1);
+                maxPriceValue = prices.get(priceIndex) - prices.get(amount);
+            } else {
+                if (prices.get(amount) > prices.get(priceIndex)) {
+                    priceIndex = amount;
+                }
+            }
+            amount--;
+        }
+        return biggestProfit;
     }
 
     /**
@@ -85,7 +112,19 @@ public class JavaAlgorithms {
      * но приветствуется попытка решить её самостоятельно.
      */
     static public int josephTask(int menNumber, int choiceInterval) {
-        throw new NotImplementedError();
+        //Трудоемкость O(n)
+        //n- menNumber
+        //Ресурсоемкость O(1)
+        int number = 0;
+        int menLeft = 0;
+        if ((menNumber < 1) || (choiceInterval < 1)) {
+            throw new AssertionError();
+        }
+        while (menLeft < menNumber) {
+            number = (number + choiceInterval) % (menLeft + 1);
+            menLeft++;
+        }
+        return number + 1;
     }
 
     /**
@@ -99,8 +138,28 @@ public class JavaAlgorithms {
      * Если имеется несколько самых длинных общих подстрок одной длины,
      * вернуть ту из них, которая встречается раньше в строке first.
      */
-    static public String longestCommonSubstring(String firs, String second) {
-        throw new NotImplementedError();
+    static public String longestCommonSubstring(String first, String second) {
+        //Трудоёмкость - O(f*s)
+        //Ресурсоёмкость - O(f*s)
+        //f - длина первой входной строки
+        //s - длина второй входной строки
+        int[][] strings = new int[first.length()][second.length()];
+        int longestFirst = 0;
+        int longestSecond = 0;
+        for (int i = 0; i < first.length(); i++) {
+            for (int j = 0; j < second.length(); j++) {
+                if ((first.charAt(i)) == (second.charAt(j))) {
+                    if ((i > 0) && (j > 0)) {
+                        strings[i][j] = strings[i - 1][j - 1] + 1;
+                    } else strings[i][j] = 1;
+                    if (strings[i][j] > strings[longestFirst][longestSecond]) {
+                        longestFirst = i;
+                        longestSecond = j;
+                    }
+                } else strings[i][j] = 0;
+            }
+        }
+        return first.substring(longestFirst - strings[longestFirst][longestSecond] + 1, longestFirst + 1);
     }
 
     /**

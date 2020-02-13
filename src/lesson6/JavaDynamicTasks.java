@@ -4,6 +4,8 @@ import kotlin.NotImplementedError;
 
 import java.util.List;
 
+import static java.lang.Math.max;
+
 @SuppressWarnings("unused")
 public class JavaDynamicTasks {
     /**
@@ -19,7 +21,34 @@ public class JavaDynamicTasks {
      * При сравнении подстрок, регистр символов *имеет* значение.
      */
     public static String longestCommonSubSequence(String first, String second) {
-        throw new NotImplementedError();
+        int firstLength = first.length();
+        int secondLength = second.length();
+        int[][] subsequence = new int[firstLength + 1][secondLength + 1];
+        StringBuilder result = new StringBuilder();
+        for (int i = firstLength - 1; i >= 0; i--) {
+            for (int j = secondLength - 1; j >= 0; j--) {
+                if ((first.charAt(i)) == (second.charAt(j))) {
+                    subsequence[i][j] = subsequence[i + 1][j + 1] + 1;
+                } else {
+                    subsequence[i][j] = max(subsequence[i + 1][j], subsequence[i][j + 1]);
+                }
+            }
+        }
+        int i = 0;
+        int j = 0;
+        while ((subsequence[i][j] != 0) && (i < firstLength) && (j < secondLength)) {
+            if ((first.charAt(i)) == (second.charAt(j))) {
+                result.append(first.charAt(i++));
+                j++;
+            } else {
+                if ((subsequence[i][j]) == (subsequence[i + 1][j])) {
+                    i++;
+                } else {
+                    j++;
+                }
+            }
+        }
+        return result.toString();
     }
 
     /**

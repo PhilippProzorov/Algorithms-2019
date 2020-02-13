@@ -1,6 +1,12 @@
 package lesson1;
 
 import kotlin.NotImplementedError;
+import java.io.*;
+import java.util.*;
+import java.util.regex.Pattern;
+import static java.util.Collections.sort;
+import static java.lang.Float.*;
+
 
 @SuppressWarnings("unused")
 public class JavaTasks {
@@ -34,8 +40,42 @@ public class JavaTasks {
      *
      * В случае обнаружения неверного формата файла бросить любое исключение.
      */
-    static public void sortTimes(String inputName, String outputName) {
-        throw new NotImplementedError();
+    static public void sortTimes(String inputName, String outputName) throws IOException {
+        //Трудоемкость O(n*log(n))
+        //Ресурсоёмкость O(n)
+        //n - количество строк
+        ArrayList<String> timeAM = new ArrayList<>();
+        ArrayList<String> timePM = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(inputName));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputName));
+        String format = "^((0[1-9])|(1[0-2])):[0-5][0-9]:[0-5][0-9] (AM|PM)$";
+        String currentLine = reader.readLine();
+        while (currentLine != null) {
+            if (Pattern.matches(format, currentLine)) {
+                if (currentLine.startsWith("12")) {
+                    currentLine = "00" + currentLine.substring(2);
+                }
+                if (currentLine.endsWith("AM")) {
+                    timeAM.add(currentLine);
+                } else {
+                    timePM.add(currentLine);
+                }
+
+            }
+            currentLine = reader.readLine();
+        }
+        reader.close();
+        sort(timeAM);
+        sort(timePM);
+        timeAM.addAll(timePM);
+        for (String time : timeAM) {
+            if (time.startsWith("00")) {
+                time = "12" + time.substring(2);
+            }
+            writer.write(time);
+            writer.newLine();
+        }
+        writer.close();
     }
 
     /**
@@ -64,9 +104,10 @@ public class JavaTasks {
      *
      * В случае обнаружения неверного формата файла бросить любое исключение.
      */
-    static public void sortAddresses(String inputName, String outputName) {
+    static public void sortAddresses(String inputName, String outputName) throws IOException {
         throw new NotImplementedError();
     }
+
 
     /**
      * Сортировка температур
@@ -98,8 +139,38 @@ public class JavaTasks {
      * 99.5
      * 121.3
      */
-    static public void sortTemperatures(String inputName, String outputName) {
-        throw new NotImplementedError();
+
+    static public void sortTemperatures(String inputName, String outputName) throws IOException {
+        //Трудоемкость O(n*log(n))
+        // n - количество строк в файле
+        //Ресурсоёмкость O(t)
+        // t - количество температур
+        BufferedReader reader = new BufferedReader(new FileReader(inputName));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputName));
+        String line = reader.readLine();
+        float noPoint = parseFloat(line)*10;
+        short min = -2730;
+        short max = 5000;
+        Map<Short, Integer> output = new TreeMap<>();
+        while (line != null) {
+            short shortNoPoint = (short) noPoint;
+            if ((noPoint >= min) && (noPoint <= max)) {
+                output.merge(shortNoPoint, 1, Integer::sum);
+            } else throw new IllegalArgumentException("Invalid input");
+            line = reader.readLine();
+        }
+        reader.close();
+        for (Map.Entry<Short, Integer> entry : output.entrySet()) {
+            int i = 0;
+            float temperatures = entry.getValue();
+            while (i < temperatures) {
+                float withPoint = (float) entry.getKey() / 10;
+                writer.write(String.valueOf(withPoint));
+                writer.newLine();
+                i++;
+            }
+        }
+        writer.close();
     }
 
     /**
@@ -131,7 +202,7 @@ public class JavaTasks {
      * 2
      * 2
      */
-    static public void sortSequence(String inputName, String outputName) {
+    static public void sortSequence(String inputName, String outputName) throws IOException {
         throw new NotImplementedError();
     }
 
@@ -150,6 +221,21 @@ public class JavaTasks {
      * Результат: second = [1 3 4 9 9 13 15 20 23 28]
      */
     static <T extends Comparable<T>> void mergeArrays(T[] first, T[] second) {
-        throw new NotImplementedError();
+        //Трудоёмкость - O(n)
+        //Ресурсоёмкость - O(n)
+        //n - количество ячеек
+        int checkedLength = 0;
+        int mergedLength = first.length;
+        int mergingLength = 0;
+        while (mergingLength < second.length) {
+            if ((checkedLength < first.length) && ((mergedLength == second.length) ||
+                    (first[checkedLength].compareTo(second[mergedLength])) <= 0)) {
+                second[mergingLength] = first[checkedLength++];
+            }
+            else {
+                second[mergingLength] = second[mergedLength++];
+            }
+            mergingLength++;
+        }
     }
 }
