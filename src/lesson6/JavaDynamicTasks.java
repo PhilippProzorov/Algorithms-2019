@@ -1,10 +1,8 @@
 package lesson6;
 
 import kotlin.NotImplementedError;
-
-import java.util.List;
-
-import static java.lang.Math.max;
+import java.util.*;
+import static java.lang.Math.*;
 
 @SuppressWarnings("unused")
 public class JavaDynamicTasks {
@@ -21,6 +19,10 @@ public class JavaDynamicTasks {
      * При сравнении подстрок, регистр символов *имеет* значение.
      */
     public static String longestCommonSubSequence(String first, String second) {
+        //Трудоёмкость O(m*n)
+        //Ресурсоёмкость O(m*n)
+        //m - длина первой строки
+        //n - длина второй строки
         int firstLength = first.length();
         int secondLength = second.length();
         int[][] subsequence = new int[firstLength + 1][secondLength + 1];

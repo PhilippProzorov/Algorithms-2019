@@ -1,9 +1,8 @@
 package lesson5;
 
 import kotlin.NotImplementedError;
-
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import lesson5.impl.GraphBuilder;
 
 @SuppressWarnings("unused")
 public class JavaGraphTasks {
@@ -34,7 +33,38 @@ public class JavaGraphTasks {
      * связного графа ровно по одному разу
      */
     public static List<Graph.Edge> findEulerLoop(Graph graph) {
-        throw new NotImplementedError();
+        //Трудоемкость O(n*n)
+        //Ресурсоёмкость O(m+n)
+        //m - количество дуг
+        //n - количество вершин
+        List<Graph.Edge> result = new LinkedList<>();
+        List<Graph.Vertex> loop = new LinkedList<>();
+        Set<Graph.Edge> edgeSet = graph.getEdges();
+        Set<Graph.Vertex> verticesSet = graph.getVertices();
+        boolean EulerLoop = graph.getVertices().stream().anyMatch(vertex ->
+                (graph.getNeighbors(vertex).size() % 2) != 0);
+        if ((EulerLoop) || (edgeSet.isEmpty()) || (verticesSet.isEmpty())) {
+            return result;
+        }
+        loopSearch(verticesSet.iterator().next(), graph, edgeSet, verticesSet, loop);
+        int i = 0;
+        while (i < (loop.size() - 1)) {
+            result.add(graph.getConnection(loop.get(i), loop.get(i + 1)));
+            i++;
+        }
+        return result;
+    }
+
+    private static void loopSearch(Graph.Vertex vertex, Graph graph,
+                                 Set<Graph.Edge> edgeSet, Set<Graph.Vertex> verticesSet, List<Graph.Vertex> loop) {
+        for (Graph.Vertex vertices : verticesSet) {
+            Graph.Edge edge = graph.getConnection(vertex, vertices);
+            if (edgeSet.contains(edge)) {
+                edgeSet.remove(edge);
+                loopSearch(vertices, graph, edgeSet, verticesSet, loop);
+            }
+        }
+        loop.add(vertex);
     }
 
     /**
@@ -66,7 +96,32 @@ public class JavaGraphTasks {
      * J ------------ K
      */
     public static Graph minimumSpanningTree(Graph graph) {
-        throw new NotImplementedError();
+        //Трудоемкость О(n*m)
+        //Ресурсоемкость О(n)
+        //m - количество дуг
+        //n - количество вершин
+        GraphBuilder result = new GraphBuilder();
+        Map<Graph.Vertex, Integer> vertices = new LinkedHashMap<>();
+        Set<Graph.Edge> edgeSet = graph.getEdges();
+        Set<Graph.Vertex> verticesSet = graph.getVertices();
+        int count = 0;
+        for (Graph.Vertex vertex : verticesSet) {
+            vertices.put(result.addVertex(vertex.getName()), count);
+            count++;
+        }
+        for (Graph.Edge edge : edgeSet) {
+            Integer start = vertices.get(edge.getBegin());
+            Integer end = vertices.get(edge.getEnd());
+            if (!((start).equals(end))) {
+                result.addConnection(edge.getBegin(), edge.getEnd(), 0);
+                for (Map.Entry<Graph.Vertex, Integer> vertex: vertices.entrySet()) {
+                    if (vertex.getValue().equals(start)) {
+                        vertex.setValue(end);
+                    }
+                }
+            }
+        }
+        return result.build();
     }
 
     /**

@@ -44,38 +44,38 @@ public class JavaTasks {
         //Трудоемкость O(n*log(n))
         //Ресурсоёмкость O(n)
         //n - количество строк
-        ArrayList<String> timeAM = new ArrayList<>();
-        ArrayList<String> timePM = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new FileReader(inputName));
-        BufferedWriter writer = new BufferedWriter(new FileWriter(outputName));
-        String format = "^((0[1-9])|(1[0-2])):[0-5][0-9]:[0-5][0-9] (AM|PM)$";
-        String currentLine = reader.readLine();
-        while (currentLine != null) {
-            if (Pattern.matches(format, currentLine)) {
-                if (currentLine.startsWith("12")) {
-                    currentLine = "00" + currentLine.substring(2);
-                }
-                if (currentLine.endsWith("AM")) {
-                    timeAM.add(currentLine);
-                } else {
-                    timePM.add(currentLine);
-                }
+            List<String> timeAM = new ArrayList<>();
+            List<String> timePM = new ArrayList<>();
+            BufferedReader reader = new BufferedReader(new FileReader(inputName));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputName));
+            String format = "^((0[1-9])|(1[0-2])):[0-5][0-9]:[0-5][0-9] (AM|PM)$";
+            String currentLine = reader.readLine();
+            while (currentLine != null) {
+                if (Pattern.matches(format, currentLine)) {
+                    if (currentLine.startsWith("12")) {
+                        currentLine = "00" + currentLine.substring(2);
+                    }
+                    if (currentLine.endsWith("AM")) {
+                        timeAM.add(currentLine);
+                    } else {
+                        timePM.add(currentLine);
+                    }
 
+                }
+                currentLine = reader.readLine();
             }
-            currentLine = reader.readLine();
-        }
-        reader.close();
-        sort(timeAM);
-        sort(timePM);
-        timeAM.addAll(timePM);
-        for (String time : timeAM) {
-            if (time.startsWith("00")) {
-                time = "12" + time.substring(2);
+            reader.close();
+            sort(timeAM);
+            sort(timePM);
+            timeAM.addAll(timePM);
+            for (String time : timeAM) {
+                if (time.startsWith("00")) {
+                    time = "12" + time.substring(2);
+                }
+                writer.write(time);
+                writer.newLine();
             }
-            writer.write(time);
-            writer.newLine();
-        }
-        writer.close();
+            writer.close();
     }
 
     /**
@@ -148,11 +148,11 @@ public class JavaTasks {
         BufferedReader reader = new BufferedReader(new FileReader(inputName));
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputName));
         String line = reader.readLine();
-        float noPoint = parseFloat(line)*10;
         short min = -2730;
         short max = 5000;
         Map<Short, Integer> output = new TreeMap<>();
         while (line != null) {
+            float noPoint = parseFloat(line)*10;
             short shortNoPoint = (short) noPoint;
             if ((noPoint >= min) && (noPoint <= max)) {
                 output.merge(shortNoPoint, 1, Integer::sum);
