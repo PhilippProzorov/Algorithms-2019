@@ -95,6 +95,9 @@ class OpenAddressingSet<T : Any>(private val bits: Int) : AbstractMutableSet<T>(
         var current = 0
         var removed = false
         override fun next(): T {
+            //Трудоёмкость O(n)
+            //n - val capacity
+            //Ресурсоёмкость O(1)
             val index = next
             if (estimate != counter) {
                 throw ConcurrentModificationException()
@@ -129,6 +132,8 @@ class OpenAddressingSet<T : Any>(private val bits: Int) : AbstractMutableSet<T>(
         }
 
         override fun remove() {
+            //Трудоёмкость O(1)
+            //Ресурсоёмкость O(1)
             if (estimate != counter) {
                 throw ConcurrentModificationException()
             }
